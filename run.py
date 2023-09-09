@@ -3,10 +3,10 @@ import re
 import pubchempy as pcp
 from chempy import balance_stoichiometry
 
-with open('data.json', 'r') as f:
+with open('data.json', 'r') as f: # ดึงงข้อมูลจากไฟล์ JSON
     data = json.load(f)
 
-def showMenu():
+def showMenu(): # แสดงหน้าเมนู
     ("\nตัวเลือก:")
 
     print("1. ตารางธาตุ")
@@ -19,27 +19,7 @@ def showMenu():
     print("8. ดุลสมการเคมี")
     print("0. ออกจากเมนู")
 
-def th_category(category):
-    category_mapping = {
-        'diatomic nonmetal': 'อโลหะ',
-        'noble gas': 'ก๊าซเฉื่อย',
-        'alkali metal': 'โลหะแอลคาไลน์เอิร์ท',
-        'alkaline earth metal': 'โลหะแอลคาไลน์เอิร์ท',
-        'metalloid': 'ธาตุกึ่งโลหะ',
-        'polyatomic nonmetal': 'ธาตุอโลหะ',
-        'post-transition metal': 'โลหะหลังทรานซิชัน',
-        'transition metal': 'โลหะทรานซิชัน',
-        'lanthanide': 'แลนทาไนด์',
-        'actinide': 'แอกทิไนด์',
-        'unknown, probably transition metal': 'ไม่ทราบ, อาจจะเป็นโลหะทรานซิชัน',
-        'unknown, probably post-transition metal': 'ไม่ทราบ, อาจจะเป็นโลหะหลังทรานซิชัน',
-        'unknown, probably metalloid': 'ไม่ทราบ, อาจจะเป็นธาตุกึ่งโลหะ',
-        'unknown, predicted to be noble gas': 'ไม่ทราบ, อาจจะเป็นก๊าซเฉื่อย',
-        'unknown, but predicted to be an alkali metal': 'ไม่ทราบ, อาจจะเป็นโลหะแอลคาไลน์เอิร์ท'
-    }
-    return category_mapping.get(category, 'ไม่ทราบ')
-
-def chemical_equations(equation_str):
+def chemical_equations(equation_str): # ฟังก์ชั่นดุลสัมการเคมี
     reactants, products = re.split(r'=|->', equation_str)
 
     reactants = reactants.strip().split('+')
@@ -53,7 +33,7 @@ def chemical_equations(equation_str):
     balanced_equation = ' + '.join([f'{coef}{species}' for species, coef in balanced_reactants.items()]) + ' -> ' + ' + '.join([f'{coef}{species}' for species, coef in balanced_products.items()])
     return balanced_equation
 
-def search_element(query):
+def search_element(query): # ฟังก์ชั่นค้นหาธาตุ
     found_elements = []
 
     query = query.lower()
@@ -66,7 +46,7 @@ def search_element(query):
                 'ชื่อ': element['name'],
                 'เลขอะตอม': element['number'],
                 'มวลอะตอม': element['atomic_mass'],
-                'หมวดหมู่': th_category(element['category']),
+                'หมวดหมู่': element['category'],
                 'ระดับ': element['period'],
                 'สัญลักษณ์': element['symbol'],
             }
@@ -74,13 +54,13 @@ def search_element(query):
 
     return found_elements
 
-def get_atomic_number(element_name):
+def get_atomic_number(element_name): # ฟังก์ชั่นดึงเลขอะตอม
     for element in data['elements']:
         if element['name'] == element_name.capitalize():
             return element['number']
     return None
 
-def electron_configuration(atomic_number):
+def electron_configuration(atomic_number): # ฟังก์ชั่นจัดเรียงอิเล็กตรอน
     electron_config = ""
     electron_count = atomic_number
 
@@ -107,7 +87,7 @@ def electron_configuration(atomic_number):
     return electron_config.strip()
 
 while True:
-    showMenu()
+    showMenu() # แสดงหน้าเมนู
     choice = input("\nPlease Select: ")
 
     if choice == "1": # ตารางธาตุ
@@ -116,7 +96,7 @@ while True:
                 'ชื่อ': element['name'],
                 'เลขอะตอม': element['number'],
                 'มวลอะตอม': element['atomic_mass'],
-                'หมวดหมู่': th_category(element['category']),
+                'หมวดหมู่': element['category']   ,
                 'ระดับ': element['period'],
                 'สัญลักษณ์': element['symbol'],
             })
